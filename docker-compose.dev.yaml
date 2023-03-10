@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+
+  e-commerce-frontend-shop:
+    build:
+      context: ./e-commerce-frontend-shop/
+      dockerfile: .e-commerce-frontend-shop-dev.Dockerfile
+    env_file:
+      - ./e-commerce-frontend-shop/.env
+    working_dir: /app
+    ports:
+      - '5174:5174'
+    container_name: e-commerce-frontend-shop
+    volumes:
+      - ./e-commerce-frontend-shop:/app
+      - /app/node_modules
+    # environment: 
+    #   - CHOKIDAR_USEPOLLING=true
+    networks:
+      - e-commerce_network
+
+  e-commerce-frontend-admin:
+    build:
+      context: ./e-commerce-frontend-admin/
+      dockerfile: .e-commerce-frontend-admin-dev.Dockerfile
+    env_file:
+      - ./e-commerce-frontend-admin/.env
+    working_dir: /app
+    ports:
+      - '5173:5173'
+    container_name: e-commerce-frontend-admin
+    volumes:
+      - ./e-commerce-frontend-admin:/app
+      - /app/node_modules
+    # environment: 
+    #   - CHOKIDAR_USEPOLLING=true
+    networks:
+      - e-commerce_network
+
+  e-commerce-api:
+    build:
+      context: ./e-commerce-api/
+      dockerfile: .e-commerce-api-dev.Dockerfile
+    env_file:
+      - ./e-commerce-api/.env
+    depends_on:
+      - e-commerce-pg-db
+    working_dir: /app
+    ports:
+      - '3000:3000'
+    container_name: e-commerce-api
+    volumes:
+      - ./e-commerce-api:/app 
+      - /app/node_modules
+    networks:
+      - e-commerce_network
+
+  e-commerce-pg-db:
+    image: postgres:15.2-alpine
+    ports:
+      - '5006:5432'
+    environment:
+      POSTGRES_USER: julian
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: e-commerce-pg-db
+    container_name: e-commerce-pg-db
+    volumes:
+      - e-commerce_db_data:/var/lib/postgresql/data
+    networks:
+      - e-commerce_network
+
+volumes:
+  e-commerce_db_data:
+
+networks:
+  e-commerce_network:
+
+
+  
