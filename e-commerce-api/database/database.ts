@@ -3,7 +3,7 @@
 
 import knex from 'knex';
 import { Model } from 'objection';
-import knexfile from './knexfile';
+const knexfile = require('./knexfile');
 
 export function setupDb() {
   const db = knex(knexfile.development); // initializing knex instance
